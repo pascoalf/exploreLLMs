@@ -1,11 +1,19 @@
 from sentence_transformers import SentenceTransformer
 
-# Load model
-model = SentenceTransformer("sentence-transformers/all-mpnet-base-v2")
 
-# Convert text to text embeddings
-vector = model.encode("What's your name?")
+def make_txt_embedding(text, transformer):
+    # Load model
+    model = SentenceTransformer(transformer)
 
-vector.shape
+    # Convert text to text embeddings
+    vector = model.encode(text)
 
-print(vector)
+    assert type(vector.shape) is tuple
+
+    return vector
+
+if __name__ == "__main__":
+    an_example = make_txt_embedding(text = "This is an example :)", 
+                    transformer= "sentence-transformers/all-mpnet-base-v2")
+    print(an_example)
+    print(type(an_example))
