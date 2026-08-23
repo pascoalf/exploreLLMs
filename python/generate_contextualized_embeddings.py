@@ -1,6 +1,7 @@
 """Generate contextualized word embeddings
         based on https://learning.oreilly.com/library/view/hands-on-large-language/9781098150952/ch02.html#a_language_model_holds_embeddings_for_t
 """
+import torch
 from transformers import AutoModel, AutoTokenizer
 
 def context_embedding(sentence, tokenizer, model):
@@ -16,13 +17,19 @@ def context_embedding(sentence, tokenizer, model):
     # Process the tokens
     output = model(**tokens)[0]
 
+    # check right type of output
+    assert isinstance(output, torch.Tensor)
 
-context_embedding(tokenizer = "microsoft/deberta-base",
-                  model =  "microsoft/deberta-v3-xsmall",
-                  sentence = "For example, this sentence :)")
+    #
+    return output
 
 
 if __name__ == "__main__":
+    #Example
+    context_embedding(tokenizer = "microsoft/deberta-base",
+                  model =  "microsoft/deberta-v3-xsmall",
+                  sentence = "For example, this sentence :)")
+    
     # Load a tokenizer
     tokenizer = AutoTokenizer.from_pretrained("microsoft/deberta-base")
 
