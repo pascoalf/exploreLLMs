@@ -110,3 +110,28 @@ topic_model.update_topics(abstracts,
 # show topic differences
 print(topic_differences(topic_model, original_topics, nr_topics = 4))
 
+## compare against GPT version
+import openai
+from bertopic.representation import OpenAI
+
+promptGPT = """
+I have a topic that contains the following documents:
+[DOCUMENTS]
+
+The topic is described by the following keywords: [KEYWORDS]
+
+Based on the information above, extract a short topic label in the following format:
+topic: <short topic label>
+"""
+
+# update topic representations using GPT-3.5
+client = openai.OpenAI(api_key = "XXX") # not running, I don't have a key
+representation_model = OpenAI(
+    client, model = "gpt-3.5-turbo",
+    exponential_backoff = True, 
+    chat = True, 
+    promptp = promptGPT
+)
+
+# Show topic differences:
+print(topic_differences(topic_model, original_topics, nr_topics = 4))
