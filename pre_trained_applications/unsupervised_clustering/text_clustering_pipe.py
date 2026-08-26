@@ -4,6 +4,10 @@ from sentence_transformers import SentenceTransformer
 from umap import UMAP
 from hdbscan import HDBSCAN
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
 dataset = load_dataset("maartengr/arxiv_nlp")["train"]
 
 # Extract metadata
@@ -43,8 +47,34 @@ len(set(clusters))
 
 # Explore documents in cluster
 cluster = 0
-for index in np.where(clusters == cluster)[0][:3]
+for index in np.where(clusters == cluster)[0][:3]:
     print(abstracts[index][:300] + "... \n")
 
+"""For visualization we can redduce dimensions further to 2 dimensions"""
+reduced_embeddings2 = UMAP(
+    n_components = 2,
+    min_dist = 0.0,
+    metric = "cosine",
+    random_state = 42
+).fit_transform(embeddings)
+
+# into a dataframe
+df = pd.DataFrame(reduced_embeddings2, columns = ["x", "y"])
+df["title"] = titles
+df["cluster"] = [str(c) for c in clusters]
+
+# select outliers and non-outliers (clusters)
+to_plot = df.loc[df.cluster != "-1", :]
+outliers = df.loc[df.cluster == "-1", :]
+
+# Plot outliers and non-outliers separately
+plt.scatter(outliers.x,
+            outliers.y,
+            alpha = 0.05,
+            s = 2,
+            c = "grey")
+plt.scatter(to_plot.x, to_plot.y,
+            c = to_plot.cluster.astype(int),
+            alpha = 0.6, s = 2, cmap = "tab20b")
 
 """To do later: make a function to run over multiple models and compare them"""
