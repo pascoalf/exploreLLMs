@@ -7,7 +7,8 @@ from copy import deepcopy
 import pandas as pd
 from bertopic.representation import KeyBERTInspired
 from bertopic.representation import MaximalMarginalRelevance
-
+from transformers import pipeline
+from bertopic.representation import TextGeneration
 
 dataset = load_dataset("maartengr/arxiv_nlp")["train"]
 
@@ -83,3 +84,29 @@ topic_model.update_topics(abstracts, representation_model = representation_model
 
 # Shoow topic differences
 print(topic_differences(topic_model, original_topics, nr_topics = 4))
+
+
+# Add a text generation block
+prompt = """I have a topic that contains the following:
+[DOCUMENTS]
+
+The topic is described by the following keywords: '[KEYWORDS]'.
+
+Based on the documents and keywords, what is this topic about?"""
+
+# Update our topic representations using Flan-T5
+generator = pipeline("text2text-generation",
+                     model = "google/flan-t5-small")
+representation_model = TextGeneration(
+    generator, 
+    prompt = prompt, 
+    doc_length = 50,
+    tokenizer = "whitespace"
+)
+
+topic_model.update_topics(abstracts, 
+                                representation_model = representation_model)
+
+# show topic differences
+print(topic_differences(topic_model, original_topics, nr_topics = 4))
+
