@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 dataset = load_dataset("maartengr/arxiv_nlp")["train"]
 
 # Extract metadata
