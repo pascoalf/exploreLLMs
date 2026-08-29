@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ignore model files
+Phi-3-mini-4k-instruct-fp16.gguf
